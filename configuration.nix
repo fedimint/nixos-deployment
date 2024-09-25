@@ -166,14 +166,13 @@ in
         root = pkgs.fedimint-ui;
       };
       locations."=/config.json" = {
-        alias = pkgs.writeText "config.json"
-          ''
-            {
-                "fm_config_api": "wss://${fmApiFqdn}/ws/",
-                # CHANGEME: ToS that will be displayed to the Admin
-                "tos": "ToS "
-            }
-          '';
+        # CHANGEME: specify Terms Of Service (ToS) for the federation in the field tos
+        alias = pkgs.writeText "config.json" ''
+          {
+              "fm_config_api": "wss://${fmApiFqdn}/ws/",
+              "tos": "Term of Services for this federation"
+          }
+        '';
       };
     };
   };
