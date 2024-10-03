@@ -6,8 +6,7 @@
     };
     fedimint = {
       # CHANGEME: change to a version you'd like to use
-      # url = "github:fedimint/fedimint?ref=refs/tags/v0.3.1";
-      url = "github:fedimint/fedimint?rev=d2840ae5d9988eed601f9bc917d4f2028c7bcee9";
+      url = "github:fedimint/fedimint?ref=refs/tags/v0.4.3";
     };
     fedimint-ui = {
       url = "github:fedimint/ui?rev=b57151db3bc4afa373cd61d67b8677e0ba38ceeb";
