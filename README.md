@@ -1,6 +1,6 @@
 # Fedimint NixOS deployment template
 
-Using this template you can easily setup up a Fedimint instance.
+Using this template you can easily setup up a Fedimint instance on a new NixOS Linux server.
 
 
 ### Be aware of limitations and constrains
