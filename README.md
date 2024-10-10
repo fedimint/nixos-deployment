@@ -81,9 +81,6 @@ If you can't build x86_64-linux packages on your local OS (e.g. you're a MacOS u
 you might use the target system (server) as a build machine itself. This might require more
 disk space and take longer, as the server is probably slower than your local machine.
 
-Use https://github.com/DeterminateSystems/nix-installer and run the installation shell command **on the
-server** to setup Nix building system first.
-
 Use:
 
 ```
@@ -109,6 +106,8 @@ data directory to speed up the process.
 
 In the default configuration the pruned note will take around 12GB of storage.
 
+TODO: A `just` command that automatically populates the bitcoind data dir with
+prunednode.today download.
 
 #### Deploying changes
 

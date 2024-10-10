@@ -9,10 +9,10 @@ default:
 
 # Apply (deply) configuration to a host
 apply conf=(FLAKE_CONF) ssh_host=(SSH_HOST):
-  nixos-rebuild switch -L --flake .#{{conf}} --target-host "{{ssh_host}}"
+  nixos-rebuild switch --flake .#{{conf}} --target-host "{{ssh_host}}"
 
 apply-build-on-remote conf=(FLAKE_CONF) ssh_host=(SSH_HOST):
-  nixos-rebuild switch -L --flake .#{{conf}} --build-host "{{ssh_host}}" --target-host "{{ssh_host}}"
+  nixos-rebuild switch --flake .#{{conf}} --build-host "{{ssh_host}}" --target-host "{{ssh_host}}"
 
 # Bootstrap host using nixos-anywhere
 bootstrap conf=(FLAKE_CONF) ssh_host=(SSH_HOST):

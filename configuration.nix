@@ -116,6 +116,7 @@ in
     environment = {
       "RUST_LOG" = "info";
       "RUST_BACKTRACE" = "1";
+      "FM_REL_NOTES_ACK" = "0_4_xyz";
     };
     api = {
       url = "wss://${fqdn}/ws/";
