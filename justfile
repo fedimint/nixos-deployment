@@ -1,5 +1,5 @@
 # CHANGEME
-FQDN := "myfedimint.net"
+FQDN := "nixos-fedimintd-test.dpc.pw"
 SSH_HOST := "root@" + FQDN
 FLAKE_CONF := "myfedimint"
 
