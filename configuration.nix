@@ -1,16 +1,14 @@
-{ modulesPath, lib, pkgs, ... }:
+{
+  modulesPath,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  # CHANGEME: register a DNS domain, and make
-  # api.<domain>
-  # p2p.<domain>
-  # admin.<domain>
-  # a `A` record with the IP of your fedimint server
+  # CHANGEME: register a DNS domain, and make it point at IP of your fedimint server
   # Typically you can use `ip ad ls | grep global` command on the server to find this value.
-  fmFqdn = "myfedimint.net";
-  fmApiFqdn = "api.${fmFqdn}";
-  fmP2pFqdn = "p2p.${fmFqdn}";
-  fmAdminFqdn = "admin.${fmFqdn}";
+  fqdn = "myfedimint.net";
 in
 {
   imports = [
@@ -38,23 +36,26 @@ in
     "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q== schacon@mylaptop.local"
   ];
 
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.04";
 
   networking.enableIPv6 = true;
-
-  # CHANGEME: email address you would like to use to get notifications about
-  # SSL domain issues etc.
-  security.acme.defaults.email = "youremail@proton.me";
-  security.acme.acceptTerms = true;
+  security.acme = {
+    # CHANGEME: email address you would like to use to get notifications about
+    # SSL domain issues etc.
+    defaults.email = "youremail@proton.me";
+    acceptTerms = true;
+  };
 
   networking = {
     firewall = {
       allowPing = true;
 
-      allowedTCPPorts = [ 80 443 ];
+      allowedTCPPorts = [
+        80
+        443
+      ];
     };
   };
-
 
   # General server stuff
   boot.tmp.cleanOnBoot = true;
@@ -85,6 +86,11 @@ in
   };
   services.journald.extraConfig = "SystemMaxUse=1G";
 
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+  };
 
   nix-bitcoin = {
     generateSecrets = true;
@@ -100,80 +106,34 @@ in
     dbCache = 2200;
   };
 
-  users.extraUsers.fedimintd-mainnet.extraGroups = [ "bitcoinrpc-public" ];
+  # give fedimintd user access to the bitcoind secret
+  systemd.services.fedimintd-mainnet.serviceConfig = {
+    SupplementaryGroups = "bitcoinrpc-public";
+  };
 
   services.fedimintd."mainnet" = {
     enable = true;
-    package = pkgs.fedimintd;
-    extraEnvironment = {
+    environment = {
       "RUST_LOG" = "info";
       "RUST_BACKTRACE" = "1";
     };
     api = {
-      address = "wss://${fmApiFqdn}/ws/";
-      bind = "127.0.0.1";
+      url = "wss://${fqdn}/ws/";
     };
     p2p = {
-      address = "fedimint://${fmP2pFqdn}:8173";
-      openFirewall = true;
-      bind = "0.0.0.0";
+      url = "fedimint://${fqdn}:8173";
     };
     bitcoin = {
       network = "bitcoin";
       rpc = {
-        address = "http://public@127.0.0.1:8332";
+        url = "http://bitcoin@127.0.0.1:8332";
         secretFile = "/etc/nix-bitcoin-secrets/bitcoin-rpcpassword-public";
       };
     };
-  };
-
-  services.nginx = {
-    enable = true;
-    recommendedProxySettings = true;
-    recommendedTlsSettings = true;
-
-    virtualHosts."${fmApiFqdn}" = {
-      enableACME = true;
-      forceSSL = true;
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8045/";
-        extraConfig = "proxy_pass_header Authorization;";
-      };
-      locations."/ws/" = {
-        proxyPass = "http://127.0.0.1:8174/";
-        proxyWebsockets = true;
-        extraConfig = "proxy_pass_header Authorization;";
-      };
-      locations."= /meta.json" = {
-        alias = "/var/www/meta.json";
-        extraConfig = ''
-          add_header Access-Control-Allow-Origin '*';
-        '';
-      };
-      locations."/federation_assets/" = {
-        alias = "/var/www/static/";
-        extraConfig = ''
-          add_header Access-Control-Allow-Origin '*';
-        '';
-      };
-    };
-
-
-    virtualHosts."${fmAdminFqdn}" = {
-      enableACME = true;
-      forceSSL = true;
-      locations."/" = {
-        root = pkgs.fedimint-ui;
-      };
-      locations."=/config.json" = {
-        # CHANGEME: specify Terms Of Service (ToS) for the federation in the field tos
-        alias = pkgs.writeText "config.json" ''
-          {
-              "fm_config_api": "wss://${fmApiFqdn}/ws/",
-              "tos": "Term of Services for this federation"
-          }
-        '';
-      };
+    nginx = {
+      enable = true;
+      inherit fqdn;
     };
   };
+
 }
