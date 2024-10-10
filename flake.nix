@@ -1,6 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+
     disko = {
       url = "github:nix-community/disko";
     };
@@ -12,6 +14,7 @@
   outputs =
     {
       nixpkgs,
+      flake-utils,
       disko,
       nix-bitcoin,
       ...
@@ -46,5 +49,22 @@
           ];
         };
       };
-    };
+    }
+    //
+      flake-utils.lib.eachDefaultSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          devShells = {
+            default = pkgs.mkShell {
+              packages = [
+                pkgs.just
+              ];
+            };
+          };
+        }
+      )
+  ;
 }
