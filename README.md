@@ -49,7 +49,7 @@ You should do it once and use your local copy to set up and customize your host 
 This template contains a couple of `CHANGEME` comments. Find all of them and change to values from your server/domain.
 
 
-#### Install Nix
+### Install Nix
 
 You will need Nix installed on your system to compile and run Nix-related software.
 
@@ -109,7 +109,7 @@ In the default configuration the pruned note will take around 12GB of storage.
 TODO: A `just` command that automatically populates the bitcoind data dir with
 prunednode.today download.
 
-#### Deploying changes
+## Deploying changes
 
 After the initial `nixos-anywhere` installation, you can always use:
 
