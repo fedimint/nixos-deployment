@@ -1,6 +1,6 @@
 # CHANGEME
 FQDN := "myfedimint.net"
-SSH_HOST := "root@{{FQDN}}"
+SSH_HOST := "root@" + FQDN
 FLAKE_CONF := "myfedimint"
 
 [private]
