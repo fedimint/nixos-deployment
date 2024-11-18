@@ -44,7 +44,7 @@
             # `/dev/nvme0n1` is often used on bare-metal servers. You can
             # use `df` on the server to verify.
             # Needs to be a whole disk device, not just a partition.
-            { disko.devices.disk.disk1.device = "/dev/vda"; }
+            { disko.devices.disk.disk1.device = "/dev/sda"; }
             ./configuration.nix
           ];
         };
