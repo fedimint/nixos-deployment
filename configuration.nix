@@ -104,6 +104,14 @@ in
     enable = true;
     prune = 550;
     dbCache = 2200;
+    
+    extraConfig = ''
+      # minimum memory usage settings, even on mainnet it will be slow but will work just fine
+      maxmempool=5
+      par=2
+      rpcthreads=4
+      maxconnections=32
+    '';
   };
 
   # give fedimintd user access to the bitcoind secret
